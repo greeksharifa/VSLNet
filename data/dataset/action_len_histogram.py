@@ -2,14 +2,9 @@ import json
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import glob
+import os, glob
 import re
 
-"""
-바꿀 부분:
-DATASET # 1
-filenames(경로) # 2
-"""
 
 datasets = ['activitynet', 'charades', 'tacos']
 
@@ -19,54 +14,97 @@ durations = {
     'tacos': []
 }
 
+
 for dataset in datasets:
-    filenames = list(glob.glob(dataset + '/*.txt' if dataset == 'charades' else '/*.json'))
+    filenames = list(glob.glob(dataset + ('/*.txt' if dataset == 'charades' else '/*.json')))
 
+    vid_set = set()
+
+    max_vid = ''
+    max_len = 0.0
     for filename in filenames:
+        print('filename:', filename)
 
-        def get_duration():
+        if dataset == 'activitynet':
+            with open(filename, encoding='utf8') as f:
+                data = json.load(f)
+                print('json len:', len(data))
 
-            if dataset == 'activitynet':
-                with open(filename, encoding='utf8') as f:
-                    data = json.load(f)
-
-                for vid, annotation in data.items():
-                    timestamps = annotation['timestamps']
-                    for t in timestamps:
-                        durations[dataset].append(float(t[1])-float(t[0]))
-            elif dataset == 'charades':
-                with open(filename, encoding='utf8') as f:
-                    data = f.readlines()
-
-                result = []
-                for line in data:
-                    if len(line) < 2:
-                        continue
-                    t = line.split('##')[0].split()[1:]
+            for vid, annotation in data.items():
+                if 'train' in filename:
+                    vid_set.add(vid)
+                timestamps = annotation['timestamps']
+                for t in timestamps:
                     durations[dataset].append(float(t[1])-float(t[0]))
-            elif dataset == 'tacos':
-                pass
 
-            return result
+                    l = float(t[1])-float(t[0])
+                    if l > max_len:
+                        max_len = l
+                        max_vid = vid
+
+        elif dataset == 'charades':
+            with open(filename, encoding='utf8') as f:
+                data = f.readlines()
+
+            result = []
+            for line in data:
+                if len(line) < 2:
+                    continue
+
+                if 'train' in filename:
+                    vid_set.add(line.split()[0])
+
+                t = line.split('##')[0].split()[1:]
+
+                l = float(t[1])-float(t[0])
+                if l > max_len:
+                    max_len = l
+                    max_vid = vid
 
 
-        durations[dataset].extend(get_duration())
+
+                durations[dataset].append(float(t[1])-float(t[0]))
+        elif dataset == 'tacos':
+            with open(filename, encoding='utf8') as f:
+                data = json.load(f)
+                print('json len:', len(data))
+
+            for vid, annotation in data.items():
+                if 'train' in filename:
+                    vid_set.add(vid)
+
+                timestamps = annotation['timestamps']
+                fps = annotation['fps']
+                for t in timestamps:
 
 
-    print('durations:', len(durations))
-    avg_len = sum(durations) / len(durations)
-    print('avg_len:', avg_len)
+                    l = float(t[1])-float(t[0]) / fps
+                    if l > max_len:
+                        max_len = l
+                        max_vid = vid
+
+                    durations[dataset].append((t[1]-t[0]) / fps)
+
+
+    print('number of video:', len(vid_set))
+    print('len of durations:', len(durations[dataset]))
+    avg_len = sum(durations[dataset]) / len(durations[dataset])
+    print('avg_len: {:.2f}'.format(avg_len))
+    max_len = max(durations[dataset])
+    print('max_len: {:.2f}'.format(max_len))
+    print('max_vid:', max_vid)
 
 # colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
 # sns.palplot(sns.xkcd_palette(colors))
 # sns.set(rc={'figure.figsize':(15,10)})
-# plt.xlim(0, 500)
+LIMIT = 200
+plt.xlim(0, LIMIT)
 # sns.histplot(data=durations, binwidth=5, kde=True)#, palette=['red', 'blue'])
 sns.histplot(data=durations, binwidth=2, element='poly')#, palette=['red', 'blue'])
 
-plt.title(DATASET + ' vid_ans_len(avg={:.1f}s)'.format(avg_len), fontsize=15)
+plt.title('vid_ans_len: lim_{}'.format(LIMIT), fontsize=15)
 plt.xlabel('len(sec)', fontsize=10)
 plt.ylabel('count', fontsize=15)
 
 fig = plt.gcf()
-fig.savefig(DATASET + ' vid_ans_len.png', dpi=300, format='png', bbox_inches="tight", facecolor="white")
+fig.savefig('vid_ans_len-lim_{}.png'.format(LIMIT), dpi=300, format='png', bbox_inches="tight", facecolor="white")

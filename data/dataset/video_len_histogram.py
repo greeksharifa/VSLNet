@@ -16,7 +16,7 @@ durations = {
 
 
 for dataset in datasets:
-    filenames = list(glob.glob(dataset + ('/*.txt' if dataset == 'charades' else '/*.json')))
+    filenames = list(glob.glob(dataset + '/*.json'))
 
     vid_set = set()
     num_timestamps = 0
@@ -26,7 +26,7 @@ for dataset in datasets:
     for filename in filenames:
         print('filename:', filename)
 
-        if dataset == 'activitynet':
+        if dataset == 'activitynet' or dataset == 'charades':
             with open(filename, encoding='utf8') as f:
                 data = json.load(f)
                 print('json len:', len(data))
@@ -34,45 +34,18 @@ for dataset in datasets:
             for vid, annotation in data.items():
                 if 'train' in filename:
                     vid_set.add(vid)
-                timestamps = annotation['timestamps']
-                for t in timestamps:
 
-                    if 'train' in filename:
-                        num_timestamps += 1
-                    durations[dataset].append(float(t[1])-float(t[0]))
-
-                    l = float(t[1])-float(t[0])
-                    if l > max_len:
-                        max_len = l
-                        max_vid = vid
-
-        elif dataset == 'charades':
-            with open(filename, encoding='utf8') as f:
-                data = f.readlines()
-                print('line len:', len(data))
-
-            result = []
-            for line in data:
-                if len(line) < 2:
-                    continue
-
-                if 'train' in filename:
-                    vid_set.add(line.split()[0])
-
+                duration = annotation['duration']
+                durations[dataset].append(duration)
 
                 if 'train' in filename:
                     num_timestamps += 1
+                l = duration
 
-                t = line.split('##')[0].split()[1:]
-
-                l = float(t[1])-float(t[0])
                 if l > max_len:
                     max_len = l
                     max_vid = vid
 
-
-
-                durations[dataset].append(float(t[1])-float(t[0]))
         elif dataset == 'tacos':
             with open(filename, encoding='utf8') as f:
                 data = json.load(f)
@@ -82,19 +55,18 @@ for dataset in datasets:
                 if 'train' in filename:
                     vid_set.add(vid)
 
-                timestamps = annotation['timestamps']
+                num_frames = annotation['num_frames']
                 fps = annotation['fps']
-                for t in timestamps:
+                l = num_frames / fps
+                durations[dataset].append(l)
 
-                    if 'train' in filename:
-                        num_timestamps += 1
+                if 'train' in filename:
+                    num_timestamps += 1
 
-                    l = float(t[1])-float(t[0]) / fps
-                    if l > max_len:
-                        max_len = l
-                        max_vid = vid
+                if l > max_len:
+                    max_len = l
+                    max_vid = vid
 
-                    durations[dataset].append((t[1]-t[0]) / fps)
 
 
     print('number of video in trainset:', len(vid_set))
@@ -109,7 +81,7 @@ for dataset in datasets:
 # colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
 # sns.palplot(sns.xkcd_palette(colors))
 # sns.set(rc={'figure.figsize':(15,10)})
-LIMIT = 200
+LIMIT = 250
 plt.xlim(0, LIMIT)
 # sns.histplot(data=durations, binwidth=5, kde=True)#, palette=['red', 'blue'])
 sns.histplot(data=durations, binwidth=2, element='poly')#, palette=['red', 'blue'])
@@ -119,4 +91,4 @@ plt.xlabel('len(sec)', fontsize=10)
 plt.ylabel('count', fontsize=15)
 
 fig = plt.gcf()
-fig.savefig('action_len-lim_{}.png'.format(LIMIT), dpi=300, format='png', bbox_inches="tight", facecolor="white")
+fig.savefig('vid_len-lim_{}.png'.format(LIMIT), dpi=300, format='png', bbox_inches="tight", facecolor="white")

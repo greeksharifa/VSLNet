@@ -89,12 +89,12 @@ for dataset in datasets:
                     if 'train' in filename:
                         num_timestamps += 1
 
-                    l = float(t[1])-float(t[0]) / fps
+                    l = float(t[1]-t[0]) / fps
                     if l > max_len:
                         max_len = l
                         max_vid = vid
 
-                    durations[dataset].append((t[1]-t[0]) / fps)
+                    durations[dataset].append(float(t[1]-t[0]) / fps)
 
 
     print('number of video in trainset:', len(vid_set))

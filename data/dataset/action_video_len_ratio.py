@@ -6,6 +6,10 @@ import os, glob
 import re
 
 
+ONLY_AUG = False
+AUG = False
+
+
 datasets = ['activitynet', 'charades', 'tacos']
 
 durations = {
@@ -25,8 +29,14 @@ for dataset in datasets:
 
     for filename in filenames:
         print('filename:', filename)
-        if 'train' in filename:
+        if ONLY_AUG and 'aug' not in filename:
+            print('not aug file passed')
             continue
+        if not ONLY_AUG and not AUG and 'aug' in filename:
+            print('aug file passed')
+            continue
+        # if 'train' in filename:
+        #     continue
 
         if dataset == 'activitynet':
             with open(filename, encoding='utf8') as f:
@@ -94,16 +104,22 @@ for dataset in datasets:
     # colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
     # sns.palplot(sns.xkcd_palette(colors))
     # sns.set(rc={'figure.figsize':(15,10)})
-    LIMIT = 200
     plt.xlim(0, 1)
 
     sns.scatterplot(x='S', y='E', data=durations[dataset], s=1)
 
-    plt.title('action_video_len_ratio_valtest_{}.png'.format(dataset), fontsize=15)
+    title = 'act_vid_len_ratio'
+    if ONLY_AUG:
+        title += '-only_aug'
+    elif AUG:
+        title += '-contain_aug'
+    title += '-{}'.format(dataset)
+
+    plt.title(title, fontsize=15)
     plt.xlabel('S', fontsize=15)
     plt.ylabel('E', fontsize=15)
 
     fig = plt.gcf()
-    fig.savefig('action_video_len_ratio_valtest_{}.png'.format(dataset),
-                dpi=300, format='png', bbox_inches="tight", facecolor="white")
+    fig.savefig(title + '.png', dpi=300, format='png',
+                bbox_inches="tight", facecolor="white")
     plt.show()

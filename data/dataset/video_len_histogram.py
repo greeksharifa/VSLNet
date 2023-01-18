@@ -4,10 +4,20 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os, glob
 import re
+import argparse
 
-ONLY_AUG = False
-AUG = False
-LIMIT = 250
+from utils import checkSE, get_title
+
+parser = argparse.ArgumentParser(description='act_vid_len_ratio')
+
+parser.add_argument('--ONLY_AUG', action='store_true')
+parser.add_argument('--ONLY_AUG_FILE', action='store_true')
+parser.add_argument('--ONLY_TRAIN', action='store_true')
+parser.add_argument('--AUG', action='store_true')
+parser.add_argument('--LIMIT', type=int, default=250)
+
+args = parser.parse_args()
+
 
 
 datasets = ['activitynet', 'charades', 'tacos']
@@ -29,10 +39,10 @@ for dataset in datasets:
     max_len = 0.0
     for filename in filenames:
         print('filename:', filename)
-        if ONLY_AUG and 'aug' not in filename:
+        if args.ONLY_AUG and 'aug' not in filename:
             print('not aug file passed')
             continue
-        if not ONLY_AUG and not AUG and 'aug' in filename:
+        if not args.ONLY_AUG and not args.AUG and 'aug' in filename:
             print('aug file passed')
             continue
 
@@ -91,16 +101,11 @@ for dataset in datasets:
 # colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
 # sns.palplot(sns.xkcd_palette(colors))
 # sns.set(rc={'figure.figsize':(15,10)})
-plt.xlim(0, LIMIT)
+plt.xlim(0, args.LIMIT)
 # sns.histplot(data=durations, binwidth=5, kde=True)#, palette=['red', 'blue'])
 sns.histplot(data=durations, binwidth=2, element='poly')#, palette=['red', 'blue'])
 
-title = 'vid_len'
-if ONLY_AUG:
-    title += '-only_aug'
-elif AUG:
-    title += '-contain_aug'
-title += '-lim_{}'.format(LIMIT)
+title = get_title(args, dataset)
 
 plt.title(title, fontsize=15)
 plt.xlabel('len(sec)', fontsize=10)

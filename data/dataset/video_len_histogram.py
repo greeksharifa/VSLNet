@@ -6,19 +6,10 @@ import os, glob
 import re
 import argparse
 
-from utils import checkSE, get_title
-
-parser = argparse.ArgumentParser(description='act_vid_len_ratio')
-
-parser.add_argument('--ONLY_AUG', action='store_true')
-parser.add_argument('--ONLY_AUG_FILE', action='store_true')
-parser.add_argument('--ONLY_TRAIN', action='store_true')
-parser.add_argument('--AUG', action='store_true')
-parser.add_argument('--LIMIT', type=int, default=250)
-
-args = parser.parse_args()
+from utils import *
 
 
+args = get_args()
 
 datasets = ['activitynet', 'charades', 'tacos']
 
@@ -38,12 +29,7 @@ for dataset in datasets:
     max_vid = ''
     max_len = 0.0
     for filename in filenames:
-        print('filename:', filename)
-        if args.ONLY_AUG and 'aug' not in filename:
-            print('not aug file passed')
-            continue
-        if not args.ONLY_AUG and not args.AUG and 'aug' in filename:
-            print('aug file passed')
+        if not check_filename(args, filename):
             continue
 
         if dataset == 'activitynet' or dataset == 'charades':
@@ -87,8 +73,10 @@ for dataset in datasets:
                     max_len = l
                     max_vid = vid
 
+    print('len of durations:', len(durations[dataset]))
+    print('\n' + '-' * 80 + '\n')
 
-
+    '''
     print('\nnumber of video in trainset:', len(vid_set))
     print('number of timestamps in trainset:', num_timestamps)
     print('len of durations:', len(durations[dataset]))
@@ -97,6 +85,7 @@ for dataset in datasets:
     max_len = max(durations[dataset])
     print('max_len: {:.2f}'.format(max_len))
     print('max_vid:', max_vid, '\n\n')
+    '''
 
 # colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
 # sns.palplot(sns.xkcd_palette(colors))
@@ -105,11 +94,12 @@ plt.xlim(0, args.LIMIT)
 # sns.histplot(data=durations, binwidth=5, kde=True)#, palette=['red', 'blue'])
 sns.histplot(data=durations, binwidth=2, element='poly')#, palette=['red', 'blue'])
 
-title = get_title(args, dataset)
+title = get_title(args, 'distribution', 'vid_len')
 
 plt.title(title, fontsize=15)
 plt.xlabel('len(sec)', fontsize=10)
 plt.ylabel('count', fontsize=15)
 
 fig = plt.gcf()
-fig.savefig(title + '.png', dpi=300, format='png', bbox_inches="tight", facecolor="white")
+fig.savefig('png_vid_len/' + title + '.png', dpi=300, format='png', bbox_inches="tight", facecolor="white")
+fig.show()

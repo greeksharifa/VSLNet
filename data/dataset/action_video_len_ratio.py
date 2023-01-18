@@ -6,17 +6,10 @@ import os, glob
 import re
 import argparse
 
-from utils import checkSE, get_title
+from utils import *
 
-parser = argparse.ArgumentParser(description='act_vid_len_ratio')
 
-parser.add_argument('--ONLY_AUG', action='store_true')
-parser.add_argument('--ONLY_AUG_FILE', action='store_true')
-parser.add_argument('--ONLY_TRAIN', action='store_true')
-parser.add_argument('--AUG', action='store_true')
-
-args = parser.parse_args()
-
+args = get_args()
     
 datasets = ['activitynet', 'charades', 'tacos']
 
@@ -35,15 +28,8 @@ for dataset in datasets:
     filenames = list(glob.glob(dataset + ('/*.txt' if dataset == 'charades' else '/*.json')))
 
     for filename in filenames:
-        if (args.ONLY_AUG or args.ONLY_AUG_FILE) and 'aug' not in filename:
-            # print('not aug file passed')
+        if not check_filename(args, filename):
             continue
-        if 'aug' in filename and (not args.ONLY_AUG and not args.ONLY_AUG_FILE and not args.AUG):
-            # print('aug file passed')
-            continue
-        if args.ONLY_TRAIN and ('train' not in filename or 'aug' in filename):
-            continue
-        print('filename:', filename)
 
         if dataset == 'activitynet':
             with open(filename, encoding='utf8') as f:
@@ -102,7 +88,7 @@ for dataset in datasets:
                     checkSE(vid, S, E)
 
 
-    print('len of durations:', len(durations[dataset]))
+    print('len of durations:', len(durations[dataset]['S']))
     print('\n' + '-' * 80 + '\n')
 
     # colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
@@ -112,13 +98,13 @@ for dataset in datasets:
 
     sns.scatterplot(x='S', y='E', data=durations[dataset], s=1)
 
-    title = get_title(args, dataset)
+    title = get_title(args, dataset, 'act_vid_len_ratio')
 
     plt.title(title, fontsize=15)
     plt.xlabel('S', fontsize=15)
     plt.ylabel('E', fontsize=15)
 
     fig = plt.gcf()
-    fig.savefig(title + '.png', dpi=300, format='png',
+    fig.savefig('png_ratio/' + title + '.png', dpi=300, format='png',
                 bbox_inches="tight", facecolor="white")
     plt.show()

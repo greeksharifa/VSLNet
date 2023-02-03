@@ -55,7 +55,7 @@ def main(video_dir, dataset_dir, bash_file):
         f.write("#!/usr/bin/env bash\n\n")  # write bash file header
         filename = os.path.join(video_dir, "v_%s.mp4")
         # cmd_base = "youtube-dl -f best -f mp4 "
-        cmd_base = "yt_dlp -f best -f mp4 "
+        cmd_base = "yt-dlp -f best -f mp4 "
         cmd_base += '"https://www.youtube.com/watch?v=%s" '
         cmd_base += '-o "%s"' % filename
 

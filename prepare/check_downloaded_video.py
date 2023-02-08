@@ -63,5 +63,8 @@ result = {
     },
 }
 
+for s in ['train', 'val', 'test']:
+    print('{}\t: exists={}\t, missing={}'.format(s, len(result['train']['exists']), len(result['train']['missing'])))
+
 with open(dataset_dir + 'downloaded_vids.json', 'w', encoding='utf8') as f:
     json.dump(result, f)

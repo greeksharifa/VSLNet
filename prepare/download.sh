@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+x#!/usr/bin/env bash
 
 yt-dlp -f best -f mp4 "https://www.youtube.com/watch?v=Hub83eTB8mM" -o "/home/ywjang/Downloads/activitynet/videos/v_Hub83eTB8mM.mp4"
 yt-dlp -f best -f mp4 "https://www.youtube.com/watch?v=tOiPx5Veyd8" -o "/home/ywjang/Downloads/activitynet/videos/v_tOiPx5Veyd8.mp4"

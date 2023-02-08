@@ -25,23 +25,12 @@ print("all_video_ids", len(all_video_ids))
 
 print(train_ids[0])
 
-'''
-train_video_ids 10009
-val_1_video_ids 4917
-val_2_video_ids 4885
-all_video_ids 14926
-QOlSCBRmfWY
-'''
-
 video_ids = []
 
 for i, path in enumerate(glob.glob(video_dir + '*')):
-    if i<5:
-        print(path)
-
     video_ids.append(path.split('/')[-1][2:-4])
 
-print(video_ids[:5])
+# print(video_ids[:5])
 
 train_ids = set(train_ids)
 val_ids = set(val_ids)

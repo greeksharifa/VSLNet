@@ -138,3 +138,6 @@ data/features/
 datasets/
 .DS_Store
 *.DS_Store
+
+
+prepare/download.sh

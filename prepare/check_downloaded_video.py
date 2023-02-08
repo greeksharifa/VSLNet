@@ -39,7 +39,7 @@ for i, path in enumerate(glob.glob(video_dir + '*')):
     if i<5:
         print(path)
 
-    video_ids.append(path.split('/')[-1][:-4])
+    video_ids.append(path.split('/')[-1][2:-4])
 
 print(video_ids[:5])
 
@@ -50,16 +50,16 @@ video_ids = set(video_ids)
 
 result = {
     'train': {
-        'exists' : train_ids.intersection(video_ids),
-        'missing': train_ids.difference(video_ids)
+        'exists' : list(train_ids.intersection(video_ids)),
+        'missing': list(train_ids.difference(video_ids))
     },
     'val': {
-        'exists' : val_ids.intersection(video_ids),
-        'missing': val_ids.difference(video_ids)
+        'exists' : list(val_ids.intersection(video_ids)),
+        'missing': list(val_ids.difference(video_ids))
     },
     'test': {
-        'exists' : test_ids.intersection(video_ids),
-        'missing': test_ids.difference(video_ids)
+        'exists' : list(test_ids.intersection(video_ids)),
+        'missing': list(test_ids.difference(video_ids))
     },
 }
 

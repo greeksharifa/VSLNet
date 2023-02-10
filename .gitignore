@@ -141,3 +141,4 @@ datasets/
 
 
 prepare/download.sh
+**/*/downloaded_vids.json

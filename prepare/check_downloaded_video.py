@@ -55,5 +55,9 @@ result = {
 for s in ['train', 'val', 'test']:
     print('{}\t: exists={}\t, missing={}'.format(s, len(result[s]['exists']), len(result[s]['missing'])))
 
-with open(dataset_dir + 'downloaded_vids.json', 'w', encoding='utf8') as f:
+
+w_name = dataset_dir + 'downloaded_vids.json'
+print('downloaded vid lists are stored in ', w_name)
+
+with open(w_name, 'w', encoding='utf8') as f:
     json.dump(result, f)

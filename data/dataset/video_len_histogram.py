@@ -83,8 +83,11 @@ for dataset in datasets:
     print('avg_len: {:.2f}'.format(avg_len))
     max_len = max(durations[dataset])
     print('max_len: {:.2f}'.format(max_len))
-    print('max_vid:', max_vid, '\n\n')
+    print('max_vid:', max_vid)
     # '''
+
+    num_exceed_duration_250 = sum(list(map(lambda x: x>250, durations[dataset])))
+    print('num_exceed_duration_250:', num_exceed_duration_250)
 
     print('\n' + '-' * 80 + '\n')
 

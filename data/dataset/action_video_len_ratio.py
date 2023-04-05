@@ -80,16 +80,20 @@ for dataset in datasets:
                     continue
                 timestamps = annotation['timestamps']
                 num_frames = float(annotation['num_frames'])
+                fps = annotation['fps']
                 for t in timestamps:
                     S = t[0] / num_frames
                     E = t[1] / num_frames
+                    if 'aug' in vid:
+                        S *= fps
+                        E *= fps
+                    # print(num_frames, t[0], S, t[1], E)
                     durations[dataset]['S'].append(S)
                     durations[dataset]['E'].append(E)
                     checkSE(vid, S, E)
 
 
     print('len of durations:', len(durations[dataset]['S']))
-    print('\n' + '-' * 80 + '\n')
 
     # colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
     # sns.palplot(sns.xkcd_palette(colors))
@@ -105,6 +109,11 @@ for dataset in datasets:
     plt.ylabel('E', fontsize=15)
 
     fig = plt.gcf()
-    fig.savefig('png_ratio/' + title + '.png', dpi=300, format='png',
+    save_filename = 'png_ratio/' + title + '.png'
+    print('save_filename:', save_filename)
+    fig.savefig(save_filename, dpi=300, format='png',
                 bbox_inches="tight", facecolor="white")
     plt.show()
+    
+
+    print('\n' + '-' * 80 + '\n')

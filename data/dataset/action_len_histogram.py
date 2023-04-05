@@ -114,7 +114,7 @@ plt.xlim(0, LIMIT)
 # sns.histplot(data=durations, binwidth=5, kde=True)#, palette=['red', 'blue'])
 sns.histplot(data=durations, binwidth=2, element='poly')#, palette=['red', 'blue'])
 
-plt.title('vid_ans_len: lim_{}'.format(LIMIT), fontsize=15)
+plt.title('action_len: lim_{}'.format(LIMIT), fontsize=15)
 plt.xlabel('len(sec)', fontsize=10)
 plt.ylabel('count', fontsize=15)
 

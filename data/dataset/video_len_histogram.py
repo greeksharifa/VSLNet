@@ -11,12 +11,13 @@ from utils import *
 
 args = get_args()
 
-datasets = ['activitynet', 'charades', 'tacos']
+# datasets = ['activitynet', 'charades', 'tacos']
+datasets = ['charades']
 
 durations = {
-    'activitynet': [],
+    # 'activitynet': [],
     'charades': [],
-    'tacos': []
+    # 'tacos': []
 }
 
 
@@ -97,7 +98,7 @@ for dataset in datasets:
 # sns.set(rc={'figure.figsize':(15,10)})
 plt.xlim(0, args.LIMIT)
 # sns.histplot(data=durations, binwidth=5, kde=True)#, palette=['red', 'blue'])
-sns.histplot(data=durations, binwidth=2, element='poly')#, palette=['red', 'blue'])
+sns.histplot(data=durations, binwidth=1, element='poly')#, palette=['red', 'blue'])
 
 title = get_title(args, 'distribution', 'vid_len')
 

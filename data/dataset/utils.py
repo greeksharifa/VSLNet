@@ -8,7 +8,7 @@ def get_args():
     parser.add_argument('--ONLY_TRAIN', action='store_true')
     parser.add_argument('--TRAIN_AUG', action='store_true')
     parser.add_argument('--AUG', action='store_true')
-    parser.add_argument('--LIMIT', type=int, default=250)
+    parser.add_argument('--LIMIT', type=int, default=200)
     
     args = parser.parse_args()
     

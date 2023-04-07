@@ -6,13 +6,15 @@ import os, glob
 import re
 
 
-datasets = ['activitynet', 'charades', 'tacos']
+# datasets = ['activitynet', 'charades', 'tacos']
+datasets = ['charades']
 
 durations = {
-    'activitynet': [],
+    # 'activitynet': [],
     'charades': [],
-    'tacos': []
+    # 'tacos': []
 }
+
 
 
 for dataset in datasets:
@@ -55,12 +57,10 @@ for dataset in datasets:
             for line in data:
                 if len(line) < 2:
                     continue
+                vid = line.split()[0]
 
                 if 'train' in filename:
-                    vid_set.add(line.split()[0])
-
-
-                if 'train' in filename:
+                    vid_set.add(vid)
                     num_timestamps += 1
 
                 t = line.split('##')[0].split()[1:]
@@ -70,9 +70,8 @@ for dataset in datasets:
                     max_len = l
                     max_vid = vid
 
-
-
                 durations[dataset].append(float(t[1])-float(t[0]))
+
         elif dataset == 'tacos':
             with open(filename, encoding='utf8') as f:
                 data = json.load(f)
@@ -106,17 +105,22 @@ for dataset in datasets:
     print('max_len: {:.2f}'.format(max_len))
     print('max_vid:', max_vid)
 
+# durations['charades'].extend(list(map(lambda x: x+0.1, range(0, 81))))
+
 # colors = ["windows blue", "amber", "greyish", "faded green", "dusty purple"]
 # sns.palplot(sns.xkcd_palette(colors))
 # sns.set(rc={'figure.figsize':(15,10)})
-LIMIT = 200
+LIMIT = 81
 plt.xlim(0, LIMIT)
 # sns.histplot(data=durations, binwidth=5, kde=True)#, palette=['red', 'blue'])
-sns.histplot(data=durations, binwidth=2, element='poly')#, palette=['red', 'blue'])
+sns.histplot(data=durations, binwidth=1, element='poly')#, palette=['red', 'blue'])
 
 plt.title('action_len: lim_{}'.format(LIMIT), fontsize=15)
 plt.xlabel('len(sec)', fontsize=10)
 plt.ylabel('count', fontsize=15)
+# plt.yscale('log')
+plt.yscale('log')
 
 fig = plt.gcf()
-fig.savefig('action_len-lim_{}.png'.format(LIMIT), dpi=300, format='png', bbox_inches="tight", facecolor="white")
+fig.savefig('action_len-lim_{}_log.png'.format(LIMIT), dpi=300, format='png', bbox_inches="tight", facecolor="white")
+plt.show()

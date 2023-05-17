@@ -20,7 +20,7 @@ durations = {
 }
 
 
-with open('charades/charades_aug.json', encoding='utf8') as f:
+with open('charades/aug/charades_aug.json', encoding='utf8') as f:
     charades_duration = json.load(f)
 
 
